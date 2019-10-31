@@ -63,6 +63,57 @@ public class Database {
 
 	}
 	
+	public int getLeftToWithdrawal(int id) {
+		String command = "SELECT leftToWithdrawal FROM customers WHERE id=?";
+		ResultSet rs = null;
+		
+		try {
+			PreparedStatement prep = conn.prepareStatement(command);
+			prep.setInt(1, id);
+			rs = prep.executeQuery();
+			rs.next();
+			
+			return rs.getInt("leftToWithdrawal");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		return 0;
+		
+
+	}
+	
+	public void checkAccount(int id) {
+		String customer = "SELECT name, money, leftToWithdrawal FROM customers WHERE id=?;";
+		
+		try {
+			PreparedStatement prep = conn.prepareStatement(customer);
+			prep.setInt(1, id);
+			prep.executeQuery();
+			//I HAVE TO RETURN THE RESULTS
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void deposit(int id, int money) {
+		String customer = "UPDATE customers SET money=? WHERE id=?;";
+		
+		try {
+			PreparedStatement prep = conn.prepareStatement(customer);
+			prep.setInt(1, money);
+			prep.setInt(2, id);
+			prep.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+
+	}
+	
 	public void withdrawal(int id, int money, int moneyLeft) {
 		
 		String customer = "UPDATE customers SET leftToWithdrawal=?, money=? WHERE id=?;";

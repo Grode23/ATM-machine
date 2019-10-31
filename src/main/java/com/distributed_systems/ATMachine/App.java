@@ -8,8 +8,9 @@ public class App
 		db.getConnection();
 		db.createDatabase();
 		db.createTable();
-		
+				
 		db.insertMember("Kostas", 200);
+		System.out.println(db.getLeftToWithdrawal(2));
 		System.out.println("All done");
 	}
 }
