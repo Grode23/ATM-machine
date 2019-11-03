@@ -1,4 +1,4 @@
-package com.distributed_systems.ATMachine;
+package com.distributed_systems.server;
 
 import java.sql.*;
 
