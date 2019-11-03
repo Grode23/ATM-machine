@@ -9,17 +9,16 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * Client is an abstract class for Reader and Writer
- * It contains all the common stuff of them
- * Such as Inner class Connection, methods and objects
- */
-public abstract class Client {
+public class Client {
 	
 	private Random random = new Random();
 	private ArrayList<Thread> connections = new ArrayList<>();	
 	private Socket socket;
-	private int id = 1;
+	private int id = 0;
+	
+	public static void main(String[] args) {
+		new Client();
+	}
 	
 	public Client() {
 
@@ -58,6 +57,17 @@ public abstract class Client {
 
 		@Override
 		public void run() {
+			
+			//Get your ID
+			try {
+				id = Integer.parseInt(input.readUTF());
+			} catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			System.out.println(id);
+			
 			// Do this forever
 			// Request and get an answer
 			while (true) {
@@ -65,24 +75,29 @@ public abstract class Client {
 				try {
 					// Sleep for some time
 					// I don't want to write or delete something all the time
-					Thread.sleep(random.nextInt(3000) + 2000);
+					Thread.sleep(random.nextInt(2500) + 500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
-				int randomNum = random.nextInt(2);
+				int randomNum = random.nextInt(3) +1;
+				int amount = (random.nextInt(200)+1) * 5; 
 				
 				
 				// Delete, write or edit
-				if (randomNum == 1) {
-					System.out.println("Deposit is called.");
-					requestDeposit(500);
-				} else if (randomNum == 2) {
-					System.out.println("Write is called.");
-					requestWrite(pick);
-				} else {
-					System.out.println("Edit is called.");
-					requestEdit(pick);
+				switch (randomNum) {
+				case 1:
+					requestDeposit(amount);
+					break;
+				case 2:
+					requestWithdrawal(amount);
+					break;
+				case 3:
+					requestLeftToWithdrawal();
+					break;
+				default:
+					System.out.println("Something else is called");
+					break;
 				}
 
 				answerFromServer();
@@ -90,6 +105,16 @@ public abstract class Client {
 
 		}
 		
+		private void requestLeftToWithdrawal() {
+			try {
+				output.writeUTF(String.valueOf(id));
+				output.writeUTF("LeftToWithdrawal");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+
 		//Gets the response from the server
 		protected void answerFromServer() {
 			try {
@@ -102,25 +127,30 @@ public abstract class Client {
 			}
 		}		
 		
-		private void requestDeposit(int money) {
-			
-		}
-
-		private void requestDelete(int pick) {
-
+		private void requestDeposit(int amount) {
 			try {
-
 				output.writeUTF(String.valueOf(id));
-				output.writeUTF(action);
+				output.writeUTF("Deposit");
+				output.writeUTF(String.valueOf(amount));
 				output.flush();
 
-				System.out.println("Request is sent.");
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-
+			
 		}
-
+		
+		private void requestWithdrawal(int amount) {
+			try {
+				output.writeUTF(String.valueOf(id));
+				output.writeUTF("Withdrawal");
+				output.writeUTF(String.valueOf(amount));
+				output.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
 
 	}
 

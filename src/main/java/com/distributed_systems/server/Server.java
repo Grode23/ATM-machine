@@ -35,6 +35,22 @@ public class Server {
 	public Server() {
 		System.out.println("Server is running");
 		
+		Thread leftToWithdrawalReverter = new Thread(() -> {
+			while(true) {
+				try {
+					System.out.println("It's in here");
+					Thread.sleep(10000);
+					db.revertLeftToWithdrawal();
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		
+		leftToWithdrawalReverter.start();
+		
 		try {
 
 			ss = new ServerSocket(PORT);
@@ -74,12 +90,15 @@ public class Server {
 
 		@Override
 		public void run() {
-			
 
 			try {
 				input = new DataInputStream(socket.getInputStream());
 				output = new DataOutputStream(socket.getOutputStream());
 
+				//Create customer
+				output.writeUTF(db.addAcount("WhoCares", 500));
+				
+				
 				while (true) {
 
 					//Server sleeps if nothing is sent because otherwise it would drain big part of the CPU
@@ -135,13 +154,11 @@ public class Server {
 					output.writeUTF(db.withdrawal(id, amount));
 					output.flush();
 					break;
-				case "L": // How much money left for withdrawal today
-					
-					break;
-				case "B": //For balance, how much money is in the account
-					
-					break;
+				case "LeftToWithdrawal": // How much money left for withdrawal today
+					output.writeUTF(db.getLeftToWithdrawal(id));
+					break;					
 				default:
+					System.out.println("This cannot happen");
 					break;
 				}
 			}catch(IOException e) {

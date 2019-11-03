@@ -47,21 +47,6 @@ public class Database {
 		}
 
 	}
-
-	// Insert a new customer in the database with default value of leftToWithdrawal as 1000
-	public void insertMember(String name, int money) {
-		String command = "INSERT INTO customers(name, money) VALUES(?, ?);";
-
-		try {
-			PreparedStatement prep = conn.prepareStatement(command);
-			prep.setString(1, name);
-			prep.setInt(2, money);
-			prep.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}
 	
 	public int getLeftToWithdrawal(int id) {
 		String command = "SELECT leftToWithdrawal FROM customers WHERE id=?";
@@ -82,7 +67,56 @@ public class Database {
 		
 		return 0;
 		
+	}
+	
+	public int getMoney(int id) {
+		String command = "SELECT money FROM customers WHERE id=?";
+		ResultSet rs = null;
+		
+		try {
+			PreparedStatement prep = conn.prepareStatement(command);
+			prep.setInt(1, id);
+			rs = prep.executeQuery();
+			rs.next();
+			
+			return rs.getInt(1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		return 0;
+		
+	}
+	
+	
+	
+	public void setLeftToWithdrawal(int leftToWithdrawal, int id) {
+		String command = "UPDATE customers SET leftToWithdrawal=? WHERE id=?;";
+		
+		try {
+			PreparedStatement prep = conn.prepareStatement(command);
+			prep.setInt(1, leftToWithdrawal);
+			prep.setInt(2, id);
+			prep.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
+	}
+	
+	public String revertLeftToWithdrawal() {
+		String command = "UPDATE customers SET leftToWithdrawal=1000;";
+		
+		try {
+			Statement statement = conn.createStatement();
+			statement.execute(command);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return "LeftToWithdrawal is reverted to all customers";
 	}
 	
 	public void checkAccount(int id) {
@@ -106,7 +140,7 @@ public class Database {
 			PreparedStatement prep = conn.prepareStatement(customer);
 			prep.setInt(1, money);
 			prep.setInt(2, id);
-			prep.executeUpdate();
+			prep.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -129,6 +163,56 @@ public class Database {
 		}
 
 	}
+	
+	public int addAccount(String name, int amount) {
+		String command = "INSERT INTO customers (name, money) VALUES (?, ?);";
+		
+		try {
+			PreparedStatement prep = conn.prepareStatement(command);
+			prep.setString(1, name);
+			prep.setInt(2, amount);
+			prep.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return getId();
+		
+	}
+	
+	public void deleteEveryone() {
+		String command = "DELETE FROM customers;";
+		
+		try {
+			Statement statement = conn.createStatement();
+			statement.execute(command);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private int getId() {
+		
+		String query = "SELECT MAX(id) FROM customers;";
+		
+		Statement statement;
+		ResultSet result = null;
+		int id = 0;
+		try {
+			statement = conn.createStatement();
+			result = statement.executeQuery(query);
+			
+			result.next();
+			id = result.getInt(1);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return id;
+	}
+
 
 
 }
