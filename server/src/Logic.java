@@ -1,10 +1,16 @@
-package com.distributed_systems.server;
 
-public class Logic {
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
+public class Logic extends UnicastRemoteObject implements RemoteLogic {
+
+	private static final long serialVersionUID = 1L;
 
 	Database database;
 
-	public Logic() {
+	public Logic() throws RemoteException {
+		super();
 		database = new Database();
 
 		database.getConnection();
@@ -15,8 +21,9 @@ public class Logic {
 		database.deleteEveryone();
 
 	}
+	
 
-	public String deposit(int id, int amount) {
+	public String deposit(int id, int amount) throws RemoteException{
 		if (amount % 5 == 0) {
 			
 			int newBalance = amount + database.getMoney(id);
@@ -27,7 +34,7 @@ public class Logic {
 		}
 	}
 
-	public String withdrawal(int id, int amount) {
+	public String withdrawal(int id, int amount) throws RemoteException {
 
 		if (amount % 20 != 0 && amount % 50 != 0) {
 			return "I'm sorry, but the amount must by devided by 20 or 50 paper bills";
@@ -66,17 +73,17 @@ public class Logic {
 
 	}
 	
-	public String revertLeftToWithdrawal() {
+	public String revertLeftToWithdrawal() throws RemoteException{
 		return database.revertLeftToWithdrawal();
 	}
 
-	public String addAcount(String name, int amount) {
+	public int addAcount(String name, int amount) throws RemoteException{
 		System.out.println("You are adding new customer to the database");
 
-		return String.valueOf(database.addAccount(name, amount));
+		return database.addAccount(name, amount);
 	}
 
-	public String getLeftToWithdrawal(int id) {
+	public String getLeftToWithdrawal(int id) throws RemoteException{
 		return "You're left to withdrawal amount is: " + database.getLeftToWithdrawal(id);
 	}
 
