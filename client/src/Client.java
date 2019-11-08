@@ -1,5 +1,3 @@
-
-
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -48,13 +46,13 @@ public class Client {
 				// Delete, write or edit
 				switch (randomNum) {
 				case 1:
-					ref.deposit(id, amount);
+					System.out.println(ref.deposit(id, amount));
 					break;
 				case 2:
-					ref.withdrawal(id, amount);
+					System.out.println(ref.withdrawal(id, amount));
 					break;
 				case 3:
-					ref.getLeftToWithdrawal(id);
+					System.out.println(ref.getLeftToWithdrawal(id));
 					break;
 				default:
 					System.out.println("Something else is called");
