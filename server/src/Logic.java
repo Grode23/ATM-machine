@@ -11,6 +11,8 @@ public class Logic extends UnicastRemoteObject implements RemoteLogic {
 
 	public Logic() throws RemoteException {
 		super();
+		
+		//Create a database, table and delete everyone who was in that table, if it already existed
 		database = new Database();
 
 		database.getConnection();
@@ -36,6 +38,7 @@ public class Logic extends UnicastRemoteObject implements RemoteLogic {
 
 	public String withdrawal(int id, int amount) throws RemoteException {
 
+		// Only 20 and 50 bill allowed
 		if (amount % 20 != 0 && amount % 50 != 0) {
 			return "I'm sorry, but the amount must by devided by 20 or 50 paper bills";
 		}

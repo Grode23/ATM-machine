@@ -15,14 +15,11 @@ public class Client {
 			// Locate RMI registry
 			Registry registry = LocateRegistry.getRegistry(HOST, PORT);
 
-			// Look up for a specific name and get remote reference (stub)
-			//String rmiObjectName = "RemoteLogic";
-			
+			// Look up for a specific name and get remote reference (stub)			
 			String rmiObjectName = "RemoteLogic";
 			RemoteLogic ref = (RemoteLogic)registry.lookup(rmiObjectName);
 
-			// Do remote method invocation
-
+			//Add acount with a default name and budget for every new customer, because I'm bored
 			int id = ref.addAcount("MyName", 800);
 			System.out.println("My ID is: " + id);
 			
@@ -40,6 +37,7 @@ public class Client {
 					e.printStackTrace();
 				}
 
+				//
 				int randomNum = random.nextInt(3) + 1;
 				int amount = (random.nextInt(200) + 1) * 5;
 
